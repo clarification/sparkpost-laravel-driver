@@ -30,7 +30,7 @@ Or by setting the environment variable `MAIL_DRIVER` in your .env file
 MAIL_DRIVER=sparkpost
 ```
 
-If you need to pass any options to the guzzle client instance which is making the request to the Send Grid API, you can do so by setting the 'guzzle' options in `config/services.php`
+If you need to pass any options to the guzzle client instance which is making the request to the sparkpost API, you can do so by setting the 'guzzle' options in `config/services.php`
 ```php
 'sparkpost' => [
     'secret' => env('SPARKPOST_SECRET'),
