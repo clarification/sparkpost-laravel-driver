@@ -5,7 +5,7 @@ namespace Clarification\MailDrivers\Sparkpost;
 use GuzzleHttp\Client;
 use Illuminate\Mail\TransportManager;
 use Illuminate\Support\ServiceProvider;
-use Clarification\MailDrivers\Sparkpost\Transport\SparkpostTransport;
+use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransport;
 use Illuminate\Mail\Transport\SparkPostTransport as LaravelSparkPostTransport;
 
 class SparkpostServiceProvider extends ServiceProvider
@@ -39,7 +39,7 @@ class SparkpostServiceProvider extends ServiceProvider
                 $config = $this->app['config']->get('services.sparkpost', []);
                 $options = isset($config['guzzle']) ? $config['guzzle'] : [];
                 $client = new Client($options);
-                return new SparkpostTransport($client, $config['secret']);
+                return new SparkPostTransport($client, $config['secret']);
             });
             return $manager;
         });
