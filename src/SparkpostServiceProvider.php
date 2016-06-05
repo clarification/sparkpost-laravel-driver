@@ -3,7 +3,6 @@
 namespace Clarification\MailDrivers\Sparkpost;
 
 use GuzzleHttp\Client;
-use Illuminate\Support\Arr;
 use Illuminate\Mail\TransportManager;
 use Illuminate\Support\ServiceProvider;
 use Clarification\MailDrivers\Sparkpost\Transport\SparkpostTransport;
@@ -31,14 +30,15 @@ class SparkpostServiceProvider extends ServiceProvider
     public function register()
     {
         // Don't need to register our driver if the current laravel install already has the spark post transport
-        if(class_exists(LaravelSparkPostTransport::class, false)) {
+        if(class_exists(LaravelSparkPostTransport::class)) {
             return;
         }
 
         $this->app->extend('swift.transport', function(TransportManager $manager) {
             $manager->extend('sparkpost', function() {
                 $config = $this->app['config']->get('services.sparkpost', []);
-                $client = new Client(Arr::get($config, 'guzzle', []));
+                $options = isset($config['guzzle']) ? $config['guzzle'] : [];
+                $client = new Client($options);
                 return new SparkpostTransport($client, $config['secret']);
             });
             return $manager;

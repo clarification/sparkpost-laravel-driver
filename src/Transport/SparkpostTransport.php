@@ -11,7 +11,7 @@ class SparkpostTransport extends Transport
     /**
      * Guzzle client instance.
      *
-     * @var \GuzzleHttp\ClientInterface
+     * @var ClientInterface
      */
     protected $client;
 
@@ -25,8 +25,8 @@ class SparkpostTransport extends Transport
     /**
      * Create a new SparkPost transport instance.
      *
-     * @param  \GuzzleHttp\ClientInterface  $client
-     * @param  string  $key
+     * @param  ClientInterface $client
+     * @param  string $key
      */
     public function __construct(ClientInterface $client, $key)
     {
@@ -40,8 +40,11 @@ class SparkpostTransport extends Transport
     public function send(Swift_Mime_Message $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
+
         $recipients = $this->getRecipients($message);
+
         $message->setBcc([]);
+
         $options = [
             'headers' => [
                 'Authorization' => $this->key,
@@ -49,12 +52,11 @@ class SparkpostTransport extends Transport
             'json' => [
                 'recipients' => $recipients,
                 'content' => [
-                    'html' => $message->getBody(),
-                    'from' => $this->getFrom($message),
-                    'subject' => $message->getSubject(),
+                    'email_rfc822' => $message->toString(),
                 ],
             ],
         ];
+
         return $this->client->post('https://api.sparkpost.com/api/v1/transmissions', $options);
     }
 
@@ -63,38 +65,30 @@ class SparkpostTransport extends Transport
      *
      * Note that SparkPost still respects CC, BCC headers in raw message itself.
      *
-     * @param  \Swift_Mime_Message $message
+     * @param  Swift_Mime_Message $message
      * @return array
      */
     protected function getRecipients(Swift_Mime_Message $message)
     {
-        $to = $bcc = [];
-        if ($message->getTo()) {
-            $to = array_merge($to, array_keys($message->getTo()));
-        }
-        if ($message->getCc()) {
-            $to = array_merge($to, array_keys($message->getCc()));
-        }
-        if ($message->getBcc()) {
-            $to = array_merge($bcc, array_keys($message->getBcc()));
-        }
-        $recipients = array_map(function ($address) {
-            return ['address' => ['email' => $address, 'header_to' => $address]];
-        }, $to);
-        return $recipients;
-    }
+        $to = [];
 
-    /**
-     * Get the "from" contacts in the format required by SparkPost.
-     *
-     * @param  Swift_Mime_Message  $message
-     * @return array
-     */
-    protected function getFrom(Swift_Mime_Message $message)
-    {
-        return array_map(function ($email, $name) {
-            return compact('name', 'email');
-        }, array_keys($message->getFrom()), $message->getFrom())[0];
+        if ($getTo = $message->getTo()) {
+            $to = array_merge($to, array_keys($getTo));
+        }
+
+        if ($getCc = $message->getCc()) {
+            $to = array_merge($to, array_keys($getCc));
+        }
+
+        if ($getBcc = $message->getBcc()) {
+            $to = array_merge($to, array_keys($getBcc));
+        }
+
+        $recipients = array_map(function ($address) {
+            return compact('address');
+        }, $to);
+
+        return $recipients;
     }
 
     /**
