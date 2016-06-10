@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Illuminate\Mail\TransportManager;
 use Illuminate\Support\ServiceProvider;
 use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransport;
+use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransportFiveZero;
 use Illuminate\Mail\Transport\SparkPostTransport as LaravelSparkPostTransport;
 
 class SparkpostServiceProvider extends ServiceProvider
@@ -39,6 +40,12 @@ class SparkpostServiceProvider extends ServiceProvider
                 $config = $this->app['config']->get('services.sparkpost', []);
                 $options = isset($config['guzzle']) ? $config['guzzle'] : [];
                 $client = new Client($options);
+
+                // handle laravel 5.0
+                if(version_compare($this->app->version(), "5.1.0") < 0) {
+                    return new SparkPostTransportFiveZero($client, $config['secret']);
+                }
+
                 return new SparkPostTransport($client, $config['secret']);
             });
             return $manager;

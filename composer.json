@@ -12,6 +12,7 @@
     }
   ],
   "require": {
+    "guzzlehttp/guzzle": ">=5.0",
     "illuminate/container": ">=5.0",
     "swiftmailer/swiftmailer": "~5.1"
   },
