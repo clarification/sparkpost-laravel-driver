@@ -5,6 +5,7 @@ namespace Clarification\MailDrivers\Sparkpost;
 use GuzzleHttp\Client;
 use Illuminate\Mail\TransportManager;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Mail\Transport\Transport as AbstractTransport;
 use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransport;
 use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransportFiveZero;
 use Illuminate\Mail\Transport\SparkPostTransport as LaravelSparkPostTransport;
@@ -36,18 +37,21 @@ class SparkpostServiceProvider extends ServiceProvider
         }
 
         $this->app->extend('swift.transport', function(TransportManager $manager) {
+
             $manager->extend('sparkpost', function() {
+
                 $config = $this->app['config']->get('services.sparkpost', []);
                 $options = isset($config['guzzle']) ? $config['guzzle'] : [];
                 $client = new Client($options);
 
-                // handle laravel 5.0
-                if(version_compare($this->app->version(), "5.1.0") < 0) {
-                    return new SparkPostTransportFiveZero($client, $config['secret']);
+                if(class_exists(AbstractTransport::class)) {
+                    return new SparkPostTransport($client, $config['secret']);
                 }
 
-                return new SparkPostTransport($client, $config['secret']);
+                // Fallback to implementation which only depends on Swift_Transport
+                return new SparkPostTransportFiveZero($client, $config['secret']);
             });
+
             return $manager;
         });
     }
