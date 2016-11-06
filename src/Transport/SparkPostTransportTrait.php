@@ -5,7 +5,7 @@ namespace Clarification\MailDrivers\Sparkpost\Transport;
 use Swift_Mime_Message;
 use GuzzleHttp\ClientInterface;
 
-trait SparkPostTransportTrait 
+trait SparkPostTransportTrait
 {
     /**
      * Guzzle client instance.
@@ -26,11 +26,13 @@ trait SparkPostTransportTrait
      *
      * @param  ClientInterface $client
      * @param  string $key
+     * @param  array $options
      */
-    public function __construct(ClientInterface $client, $key)
+    public function __construct(ClientInterface $client, $key, $options = [])
     {
         $this->client = $client;
         $this->key = $key;
+        $this->options = $options;
     }
 
     /**
@@ -56,6 +58,10 @@ trait SparkPostTransportTrait
             ],
         ];
 
+        if ($this->options) {
+            $options['json']['options'] = $this->options;
+        }
+
         return $this->client->post('https://api.sparkpost.com/api/v1/transmissions', $options);
     }
 
@@ -70,7 +76,6 @@ trait SparkPostTransportTrait
     protected function getRecipients(Swift_Mime_Message $message)
     {
         $to = [];
-
         if ($getTo = $message->getTo()) {
             $to = array_merge($to, array_keys($getTo));
         }

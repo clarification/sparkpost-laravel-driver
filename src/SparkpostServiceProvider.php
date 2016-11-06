@@ -41,15 +41,16 @@ class SparkpostServiceProvider extends ServiceProvider
             $manager->extend('sparkpost', function() {
 
                 $config = $this->app['config']->get('services.sparkpost', []);
-                $options = isset($config['guzzle']) ? $config['guzzle'] : [];
-                $client = new Client($options);
+                $sparkpostOptions = isset($config['options']) ? $config['options'] : [];
+                $guzzleOptions = isset($config['guzzle']) ? $config['guzzle'] : [];
+                $client = new Client($guzzleOptions);
 
                 if(class_exists(AbstractTransport::class)) {
-                    return new SparkPostTransport($client, $config['secret']);
+                    return new SparkPostTransport($client, $config['secret'], $sparkpostOptions);
                 }
 
                 // Fallback to implementation which only depends on Swift_Transport
-                return new SparkPostTransportFiveZero($client, $config['secret']);
+                return new SparkPostTransportFiveZero($client, $config['secret'], $sparkpostOptions);
             });
 
             return $manager;
