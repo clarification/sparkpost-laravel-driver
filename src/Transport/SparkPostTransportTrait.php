@@ -28,11 +28,11 @@ trait SparkPostTransportTrait
      * @param  string $key
      * @param  array $options
      */
-    public function __construct(ClientInterface $client, $key, $options)
+    public function __construct(ClientInterface $client, $key, $options = [])
     {
-        $this->client   = $client;
-        $this->key      = $key;
-        $this->options  = $options;
+        $this->client = $client;
+        $this->key = $key;
+        $this->options = $options;
     }
 
     /**
@@ -76,7 +76,6 @@ trait SparkPostTransportTrait
     protected function getRecipients(Swift_Mime_Message $message)
     {
         $to = [];
-
         if ($getTo = $message->getTo()) {
             $to = array_merge($to, array_keys($getTo));
         }
