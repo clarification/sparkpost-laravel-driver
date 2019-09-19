@@ -2,7 +2,7 @@
 
 namespace Clarification\MailDrivers\Sparkpost\Transport;
 
-use Swift_Mime_Message;
+use Swift_Mime_SimpleMessage;
 use GuzzleHttp\ClientInterface;
 
 trait SparkPostTransportTrait
@@ -38,7 +38,7 @@ trait SparkPostTransportTrait
     /**
      * {@inheritdoc}
      */
-    public function send(Swift_Mime_Message $message, &$failedRecipients = null)
+    public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
 
@@ -70,10 +70,10 @@ trait SparkPostTransportTrait
      *
      * Note that SparkPost still respects CC, BCC headers in raw message itself.
      *
-     * @param  Swift_Mime_Message $message
+     * @param  Swift_Mime_SimpleMessage $message
      * @return array
      */
-    protected function getRecipients(Swift_Mime_Message $message)
+    protected function getRecipients(Swift_Mime_SimpleMessage $message)
     {
         $to = [];
         if ($getTo = $message->getTo()) {
