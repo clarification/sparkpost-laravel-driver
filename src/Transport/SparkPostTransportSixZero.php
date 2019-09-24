@@ -2,43 +2,14 @@
 
 namespace Clarification\MailDrivers\Sparkpost\Transport;
 
-use Swift_Mime_Message;
-use GuzzleHttp\ClientInterface;
+use Illuminate\Mail\Transport\Transport;
+use Swift_Mime_SimpleMessage;
 
-trait SparkPostTransportTrait
+class SparkPostTransportSixZero extends Transport
 {
-    /**
-     * Guzzle client instance.
-     *
-     * @var ClientInterface
-     */
-    protected $client;
+    use SparkPostTransportTrait;
 
-    /**
-     * The SparkPost API key.
-     *
-     * @var string
-     */
-    protected $key;
-
-    /**
-     * Create a new SparkPost transport instance.
-     *
-     * @param  ClientInterface $client
-     * @param  string $key
-     * @param  array $options
-     */
-    public function __construct(ClientInterface $client, $key, $options = [])
-    {
-        $this->client = $client;
-        $this->key = $key;
-        $this->options = $options;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function send(Swift_Mime_Message $message, &$failedRecipients = null)
+    public function send(Swift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
 
@@ -70,10 +41,10 @@ trait SparkPostTransportTrait
      *
      * Note that SparkPost still respects CC, BCC headers in raw message itself.
      *
-     * @param  Swift_Mime_Message $message
+     * @param  Swift_Mime_SimpleMessage $message
      * @return array
      */
-    protected function getRecipients(Swift_Mime_Message $message)
+    protected function getRecipients(Swift_Mime_SimpleMessage $message)
     {
         $to = [];
         if ($getTo = $message->getTo()) {
@@ -93,26 +64,5 @@ trait SparkPostTransportTrait
         }, $to);
 
         return $recipients;
-    }
-
-    /**
-     * Get the API key being used by the transport.
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * Set the API key being used by the transport.
-     *
-     * @param  string  $key
-     * @return string
-     */
-    public function setKey($key)
-    {
-        return $this->key = $key;
     }
 }

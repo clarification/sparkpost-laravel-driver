@@ -2,6 +2,7 @@
 
 namespace Clarification\MailDrivers\Sparkpost;
 
+use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransportSixZero;
 use GuzzleHttp\Client;
 use Illuminate\Mail\TransportManager;
 use Illuminate\Support\ServiceProvider;
@@ -46,6 +47,13 @@ class SparkpostServiceProvider extends ServiceProvider
                 $client = new Client($guzzleOptions);
 
                 if(class_exists(AbstractTransport::class)) {
+                    $reflection = new \ReflectionClass(AbstractTransport::class);
+                    $sendMethod = $reflection->getMethod('send');
+                    $parameterClassName = $sendMethod->getParameters()[0]->getClass()->name;
+                    if ($parameterClassName === 'Swift_Mime_SimpleMessage') {
+                        return new SparkPostTransportSixZero($client, $config['secret'], $sparkpostOptions);
+                    }
+
                     return new SparkPostTransport($client, $config['secret'], $sparkpostOptions);
                 }
 
