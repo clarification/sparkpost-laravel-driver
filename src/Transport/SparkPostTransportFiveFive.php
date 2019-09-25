@@ -5,7 +5,7 @@ namespace Clarification\MailDrivers\Sparkpost\Transport;
 use Illuminate\Mail\Transport\Transport;
 use Swift_Mime_SimpleMessage;
 
-class SparkPostTransportSixZero extends Transport
+class SparkPostTransportFiveFive extends Transport
 {
     use SparkPostTransportTrait;
 
