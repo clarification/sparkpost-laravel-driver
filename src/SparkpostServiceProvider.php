@@ -47,7 +47,10 @@ class SparkpostServiceProvider extends ServiceProvider
                 $client = new Client($guzzleOptions);
 
                 if(class_exists(AbstractTransport::class)) {
-                    if (class_exists(\Swift_Mime_SimpleMessage::class)) {
+                    $reflection = new \ReflectionClass(AbstractTransport::class);
+                    $sendMethod = $reflection->getMethod('send');
+                    $parameterClassName = $sendMethod->getParameters()[0]->getClass()->name;
+                    if ($parameterClassName === 'Swift_Mime_SimpleMessage') {
                         return new SparkPostTransportFiveFive($client, $config['secret'], $sparkpostOptions);
                     }
 
