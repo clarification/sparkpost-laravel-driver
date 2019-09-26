@@ -1,24 +1,31 @@
 {
-  "name": "clarification/sparkpost-laravel-driver",
-  "type": "library",
-  "description" : "Sparkpost mail driver for Laravel",
-  "keywords": ["laravel", "mail", "driver", "sparkpost"],
-  "license": "MIT",
-  "homepage" : "http://clarification.io",
-  "authors": [
-    {
-      "name" : "Robin Lidbetter",
-      "role" : "Developer"
+    "name": "clarification/sparkpost-laravel-driver",
+    "type": "library",
+    "description" : "Sparkpost mail driver for Laravel",
+    "keywords": ["laravel", "mail", "driver", "sparkpost"],
+    "license": "MIT",
+    "homepage" : "http://clarification.io",
+    "authors": [
+        {
+            "name" : "Robin Lidbetter",
+            "role" : "Developer"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": ">=5.0",
+        "illuminate/container": ">=5.0",
+        "swiftmailer/swiftmailer": "~5.1||~6.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Clarification\\MailDrivers\\Sparkpost\\SparkpostServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Clarification\\MailDrivers\\Sparkpost\\": "src"
+        }
     }
-  ],
-  "require": {
-    "guzzlehttp/guzzle": ">=5.0",
-    "illuminate/container": ">=5.0",
-    "swiftmailer/swiftmailer": "~5.1||~6.0"
-  },
-  "autoload": {
-    "psr-4": {
-      "Clarification\\MailDrivers\\Sparkpost\\": "src"
-    }
-  }
 }

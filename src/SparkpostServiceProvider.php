@@ -3,11 +3,13 @@
 namespace Clarification\MailDrivers\Sparkpost;
 
 use GuzzleHttp\Client;
+use Swift_Mime_Message;
 use Illuminate\Mail\TransportManager;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Mail\Transport\Transport as AbstractTransport;
 use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransport;
 use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransportFiveZero;
+use Clarification\MailDrivers\Sparkpost\Transport\SparkPostTransportFiveFive;
 use Illuminate\Mail\Transport\SparkPostTransport as LaravelSparkPostTransport;
 
 class SparkpostServiceProvider extends ServiceProvider
@@ -46,6 +48,13 @@ class SparkpostServiceProvider extends ServiceProvider
                 $client = new Client($guzzleOptions);
 
                 if(class_exists(AbstractTransport::class)) {
+                    // version 6 of swiftmailer removed this class in favor of Swift_Mime_SimpleMessage
+                    // https://github.com/swiftmailer/swiftmailer/blob/5a90a13527e955f2d6e8fcc8876d087a89d37da3/CHANGES#L64-L78
+                    // larvel version 5.5 requires version 6 of swiftmailer and has updated method signatures
+                    if(!interface_exists(Swift_Mime_Message::class)) {
+                        return new SparkPostTransportFiveFive($client, $config['secret'], $sparkpostOptions);
+                    }
+
                     return new SparkPostTransport($client, $config['secret'], $sparkpostOptions);
                 }
 
