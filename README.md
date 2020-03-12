@@ -42,6 +42,7 @@ If you need to pass any options to the guzzle client instance which is making th
         'open_tracking' => false,
         'click_tracking' => false,
         'transactional' => true,
+        'endpoint' => 'https://api.sparkpost.com/api/v1/transmissions',
     ],
 ],
 ```
