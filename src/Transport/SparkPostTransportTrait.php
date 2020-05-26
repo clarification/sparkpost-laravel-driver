@@ -62,7 +62,7 @@ trait SparkPostTransportTrait
             $options['json']['options'] = $this->options;
         }
 
-        return $this->client->post('https://api.sparkpost.com/api/v1/transmissions', $options);
+        return $this->client->post($this->getEndpoint(), $options);
     }
 
     /**
@@ -93,6 +93,21 @@ trait SparkPostTransportTrait
         }, $to);
 
         return $recipients;
+    }
+
+    /**
+     * Get the endpoint used by transport, depends if option endpoint is specified
+     * Maybe https://api.sparkpost.com/api/v1/transmissions (default) or https://api.eu.sparkpost.com/api/v1/transmissions
+     *
+     * @return string
+     */
+    public function getEndpoint()
+    {
+        $endpoint = 'https://api.sparkpost.com/api/v1/transmissions';
+        if ($this->options && !empty($this->options['endpoint'])) {
+            $endpoint = $this->options['endpoint'];
+        }
+        return $endpoint;
     }
 
     /**
