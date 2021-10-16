@@ -11,6 +11,7 @@
             "role" : "Developer"
         }
     ],
+    "abandoned": "vemcogroup/laravel-sparkpost-driver",
     "require": {
         "guzzlehttp/guzzle": ">=5.0",
         "illuminate/container": ">=5.0",
